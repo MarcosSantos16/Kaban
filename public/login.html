@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kanban — Entrar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body class="auth-page">
+  <div class="auth-wrapper">
+    <div class="auth-brand">
+      <span class="brand-icon">⬛</span>
+      <span class="brand-name">KANBAN</span>
+    </div>
+
+    <div class="auth-box">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchTab('login')">Entrar</button>
+        <button class="auth-tab" onclick="switchTab('register')">Cadastrar</button>
+      </div>
+
+      <div id="tab-login" class="auth-form active">
+        <h2>Boas-vindas de volta</h2>
+        <p class="auth-sub">Continue de onde parou</p>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="login-email" placeholder="seu@email.com"/>
+        </div>
+        <div class="field">
+          <label>Senha</label>
+          <input type="password" id="login-senha" placeholder="••••••"/>
+        </div>
+        <button class="btn-primary" onclick="doLogin()">Entrar</button>
+      </div>
+
+      <div id="tab-register" class="auth-form">
+        <h2>Criar conta</h2>
+        <p class="auth-sub">Organize suas tarefas hoje</p>
+        <div class="field">
+          <label>Nome</label>
+          <input type="text" id="reg-nome" placeholder="Seu nome"/>
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="reg-email" placeholder="seu@email.com"/>
+        </div>
+        <div class="field">
+          <label>Senha</label>
+          <input type="password" id="reg-senha" placeholder="Mínimo 6 caracteres"/>
+        </div>
+        <button class="btn-primary" onclick="doRegister()">Criar conta</button>
+      </div>
+    </div>
+
+    <div id="msg" class="auth-msg"></div>
+  </div>
+
+  <script>
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then(r => r.ok ? window.location.href = '/kanban.html' : null)
+      .catch(() => {});
+
+    function switchTab(tab) {
+      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+      document.querySelector(`.auth-tab:${tab === 'login' ? 'first-child' : 'last-child'}`).classList.add('active');
+      document.getElementById('tab-' + tab).classList.add('active');
+    }
+
+    function showMsg(text, ok) {
+      const el = document.getElementById('msg');
+      el.textContent = text;
+      el.className = 'auth-msg ' + (ok ? 'ok' : 'err');
+      setTimeout(() => el.className = 'auth-msg', 3000);
+    }
+
+    async function doLogin() {
+      const email = document.getElementById('login-email').value;
+      const senha = document.getElementById('login-senha').value;
+      const res = await fetch('/api/auth/login', {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, senha })
+      });
+      const data = await res.json();
+      if (res.ok) window.location.href = '/kanban.html';
+      else showMsg(data.error, false);
+    }
+
+    async function doRegister() {
+      const nome  = document.getElementById('reg-nome').value;
+      const email = document.getElementById('reg-email').value;
+      const senha = document.getElementById('reg-senha').value;
+      const res = await fetch('/api/auth/register', {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, email, senha })
+      });
+      const data = await res.json();
+      if (res.ok) window.location.href = '/kanban.html';
+      else showMsg(data.error, false);
+    }
+  </script>
+</body>
+</html>

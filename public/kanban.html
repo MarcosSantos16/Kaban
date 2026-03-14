@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kanban — Minhas Tarefas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="brand-icon">⬛</span>
+      <span class="brand-name">KANBAN</span>
+    </div>
+    <div class="topbar-right">
+      <span id="topbar-user"></span>
+      <button class="btn-theme" id="btn-theme" onclick="toggleTheme()">🌙</button>
+      <button class="btn-logout" onclick="logout()">Sair</button>
+    </div>
+  </header>
+
+  <main class="board-wrapper">
+    <div class="board">
+      <div class="column" data-status="todo" ondragover="onDragOver(event)" ondrop="onDrop(event, 'todo')">
+        <div class="col-header">
+          <span class="col-dot dot-todo"></span>
+          <span class="col-title">A FAZER</span>
+          <span class="col-count" id="count-todo">0</span>
+        </div>
+        <div class="col-cards" id="col-todo"></div>
+        <button class="btn-add" onclick="openModal('todo')">+ Nova tarefa</button>
+      </div>
+
+      <div class="column" data-status="doing" ondragover="onDragOver(event)" ondrop="onDrop(event, 'doing')">
+        <div class="col-header">
+          <span class="col-dot dot-doing"></span>
+          <span class="col-title">EM PROGRESSO</span>
+          <span class="col-count" id="count-doing">0</span>
+        </div>
+        <div class="col-cards" id="col-doing"></div>
+        <button class="btn-add" onclick="openModal('doing')">+ Nova tarefa</button>
+      </div>
+
+      <div class="column" data-status="done" ondragover="onDragOver(event)" ondrop="onDrop(event, 'done')">
+        <div class="col-header">
+          <span class="col-dot dot-done"></span>
+          <span class="col-title">CONCLUÍDO</span>
+          <span class="col-count" id="count-done">0</span>
+        </div>
+        <div class="col-cards" id="col-done"></div>
+        <button class="btn-add" onclick="openModal('done')">+ Nova tarefa</button>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal-bg" id="modal" onclick="closeModal(event)">
+    <div class="modal-box">
+      <h3 id="modal-title">Nova Tarefa</h3>
+      <input type="hidden" id="modal-id"/>
+      <input type="hidden" id="modal-status"/>
+
+      <div class="field">
+        <label>Título *</label>
+        <input type="text" id="modal-titulo" placeholder="O que precisa ser feito?"/>
+      </div>
+      <div class="field">
+        <label>Descrição</label>
+        <textarea id="modal-desc" placeholder="Detalhes opcionais..." rows="3"></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Prioridade</label>
+          <select id="modal-prioridade">
+            <option value="baixa">🟢 Baixa</option>
+            <option value="media" selected>🟡 Média</option>
+            <option value="alta">🔴 Alta</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Data prazo</label>
+          <input type="date" id="modal-data"/>
+        </div>
+        <div class="field">
+          <label>Hora prazo</label>
+          <input type="time" id="modal-hora"/>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModalBtn()">Cancelar</button>
+        <button class="btn-primary" onclick="saveTask()">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <script src="js/kanban.js"></script>
+</body>
+</html>
